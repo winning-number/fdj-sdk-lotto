@@ -7,7 +7,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/winning-number/fdjapi-lotto/csvparser"
+	"github.com/winning-number/fdj-sdk-lotto/csvparser"
 )
 
 func TestNew(t *testing.T) {

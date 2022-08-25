@@ -1,4 +1,4 @@
-module github.com/winning-number/fdjapi-lotto
+module github.com/winning-number/fdj-sdk-lotto
 
 go 1.19
 

@@ -12,9 +12,9 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/winning-number/fdjapi-lotto/csvparser"
-	"github.com/winning-number/fdjapi-lotto/httpclient"
-	"github.com/winning-number/fdjapi-lotto/reader"
+	"github.com/winning-number/fdj-sdk-lotto/csvparser"
+	"github.com/winning-number/fdj-sdk-lotto/httpclient"
+	"github.com/winning-number/fdj-sdk-lotto/reader"
 )
 
 // sources zip files to get history draw(s)

@@ -5,9 +5,9 @@ package mocks
 import (
 	io "io"
 
-	csvparser "github.com/winning-number/fdjapi-lotto/csvparser"
+	csvparser "github.com/winning-number/fdj-sdk-lotto/csvparser"
 
-	lotto "github.com/winning-number/fdjapi-lotto"
+	lotto "github.com/winning-number/fdj-sdk-lotto"
 
 	mock "github.com/stretchr/testify/mock"
 )
