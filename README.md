@@ -5,6 +5,18 @@
 [![Go Reference](https://pkg.go.dev/badge/github.com/winning-number/fdj-sdk-lotto.svg)](https://pkg.go.dev/github.com/winning-number/fdj-sdk-lotto)
 <!-- Build tag (git action) -->
 ![Build status](https://github.com/winning-number/fdj-sdk-lotto/actions/workflows/goci.yml/badge.svg)
+<!-- CodeCoverage -->
+[![codecov](https://codecov.io/gh/winning-number/fdj-sdk-lotto/branch/main/graph/badge.svg?token=7TCE3QB21E)](https://codecov.io/gh/winning-number/fdj-sdk-lotto)
+<!-- Go report notation -->
+[![Go Report Card](https://goreportcard.com/badge/github.com/winning-number/fdj-sdk-lotto)](https://goreportcard.com/report/github.com/winning-number/fdj-sdk-lotto)
+<!-- CodeBeat -->
+[![codebeat badge](https://codebeat.co/badges/6d11dead-fa65-4f84-b72d-e1218694a0ec)](https://codebeat.co/projects/github-com-winning-number-fdj-sdk-lotto-main)
+<!-- Release -->
+[![Release](https://img.shields.io/github/release/winning-number/fdj-sdk-lotto.svg?style=flat-square)](https://github.com/winning-number/fdj-sdk-lotto/releases)
+<!-- FOSSA -->
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fwinning-number%2Ffdj-sdk-lotto.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fwinning-number%2Ffdj-sdk-lotto?ref=badge_shield)
+<!-- License -->
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://raw.githubusercontent.com/winning-number/fdj-sdk-lotto/main/LICENSE.md)
 
 <!-- Description section -->
 This package is a sdk of the lotto (FRANCAISE DES JEUX) and could get the full draws history. It get the draws history provided from [any csv files](https://www.fdj.fr/jeux-de-tirage/loto/historique) and convert them in a standardized Draw format.
