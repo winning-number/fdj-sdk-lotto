@@ -1,3 +1,5 @@
+// Package reader read zip archive and csv file with a grace reader closer.
+// It could record the downloaded files inside a folder if you want.
 package reader
 
 import (
@@ -33,15 +35,15 @@ type Option struct {
 func New(zipReader io.ReadCloser, option Option, fileName string) (Reader, error) {
 	var err error
 
-	r := &reader{}
-	if err := r.zipSource(zipReader, option, fileName); err != nil {
+	driver := &reader{}
+	if err := driver.zipSource(zipReader, option, fileName); err != nil {
 		return nil, err
 	}
-	if err = r.csvSource(option, fileName); err != nil {
+	if err = driver.csvSource(option, fileName); err != nil {
 		return nil, err
 	}
 
-	return r, nil
+	return driver, nil
 }
 
 func (r *reader) Close() error {
@@ -70,7 +72,6 @@ func (r reader) CSVReader() io.ReadCloser {
 
 func (r *reader) zipSource(zipReader io.ReadCloser, option Option, fileName string) error {
 	var err error
-	var zipFile *os.File
 
 	if zipReader == nil {
 		return ErrInvalidReaderInput
@@ -91,17 +92,7 @@ func (r *reader) zipSource(zipReader io.ReadCloser, option Option, fileName stri
 
 	// Write the compressed body inside a zipFile
 	zipPath := fmt.Sprintf("%s/%s", option.OutputZipFile, fileName)
-	if err = func() error {
-		if zipFile, err = os.Create(zipPath); err != nil {
-			return err
-		}
-		defer zipFile.Close()
-		if _, err = io.Copy(zipFile, zipReader); err != nil {
-			return err
-		}
-
-		return nil
-	}(); err != nil {
+	if err = r.copyZipSource(zipReader, zipPath); err != nil {
 		return err
 	}
 
@@ -110,6 +101,21 @@ func (r *reader) zipSource(zipReader io.ReadCloser, option Option, fileName stri
 		return err
 	}
 	r.zipReader = &r.zipCloser.Reader
+
+	return nil
+}
+
+func (r *reader) copyZipSource(zipReader io.ReadCloser, zipPath string) error {
+	var err error
+	var zipFile *os.File
+
+	if zipFile, err = os.Create(zipPath); err != nil {
+		return err
+	}
+	defer zipFile.Close()
+	if _, err = io.Copy(zipFile, zipReader); err != nil {
+		return err
+	}
 
 	return nil
 }

@@ -115,6 +115,8 @@ func OrderDraws(draws *[]Draw, order OrderType) {
 
 // orderDrawsASC from less to more
 // order from recentest to oldest
+//
+//nolint:dupl // no duplicate with orderDrawsDESC
 func orderDrawsASC(draws *[]Draw) {
 	sort.SliceStable(*draws, func(i, j int) bool {
 		if (*draws)[i].Metadata.Date.After((*draws)[j].Metadata.Date) {
@@ -131,6 +133,8 @@ func orderDrawsASC(draws *[]Draw) {
 
 // orderDrawsDESC from more to less
 // order from oldest to recentest
+//
+//nolint:dupl // no duplicate with orderDrawsASC
 func orderDrawsDESC(draws *[]Draw) {
 	sort.SliceStable(*draws, func(i, j int) bool {
 		if (*draws)[i].Metadata.Date.Before((*draws)[j].Metadata.Date) {

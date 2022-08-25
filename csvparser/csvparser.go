@@ -5,7 +5,6 @@ package csvparser
 
 import (
 	"encoding/csv"
-	"fmt"
 	"io"
 
 	"github.com/jszwec/csvutil"
@@ -55,7 +54,6 @@ func CSVParse(r io.Reader, cfg ParseConfig) (Warning, error) {
 	csvReader = csv.NewReader(r)
 	csvReader.Comma = cfg.CommaSeparator
 	if decoder, err = csvutil.NewDecoder(csvReader); err != nil {
-		fmt.Println("error: ", err.Error())
 		return nil, errors.Wrap(ErrNewDecoder, err.Error())
 	}
 	decoder.DisallowMissingColumns = true

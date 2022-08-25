@@ -9,7 +9,43 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/winning-number/fdj-sdk-lotto/helptest"
 )
+
+// files to test have a zip.ReadCloser
+const (
+	testReadCloserZipFile = "testdata/zipfile.zip"
+)
+
+// files and folder use for the tests file creation
+const (
+	testZipFile = "test-file.zip"
+	testFolder  = "../.ignore"
+	testCSVFile = "test-file.csv"
+)
+
+// helpCloseSourceReader close the sources after unit tests
+func helpCloseSourceReader(t *testing.T, driver Reader) {
+	var source *reader
+	var ok bool
+	var err error
+
+	if source, ok = driver.(*reader); !ok {
+		t.Error("SourceReader do not implemented by *sourceReader")
+	}
+
+	if source.csvContent != nil {
+		if err = source.csvContent.Close(); err != nil {
+			t.Error(err)
+		}
+	}
+	if source.zipCloser != nil {
+		if err = source.zipCloser.Close(); err != nil {
+			t.Error(err)
+		}
+	}
+}
 
 func TestNew(t *testing.T) {
 
@@ -47,7 +83,8 @@ func TestNew(t *testing.T) {
 		}
 	})
 	t.Run("Should return an error because folder path for the zip file do not exist", func(t *testing.T) {
-		r := helpCreateZipReader(t, zipContent{content: []byte(`content zipped for unit testing`)})
+		r := helptest.CreateZipReader(t, helptest.ZipContent{
+			Content: []byte(`content zipped for unit testing`)})
 
 		source, err := New(r, Option{
 			OutputZipFile: ".ignore/folder-do-not-exist",
@@ -59,9 +96,9 @@ func TestNew(t *testing.T) {
 		}
 	})
 	t.Run("Should return an error because reader file contains any files", func(t *testing.T) {
-		r := helpCreateZipReader(t,
-			zipContent{name: "test"},
-			zipContent{name: "test2"})
+		r := helptest.CreateZipReader(t,
+			helptest.ZipContent{Name: "test"},
+			helptest.ZipContent{Name: "test2"})
 
 		source, err := New(r, Option{}, "no-name")
 
@@ -71,7 +108,9 @@ func TestNew(t *testing.T) {
 		}
 	})
 	t.Run("Should return an error because csvFile path do not exist for the creation", func(t *testing.T) {
-		r := helpCreateZipReader(t, zipContent{content: []byte(`content zipped for unit testing`), name: "test"})
+		r := helptest.CreateZipReader(t, helptest.ZipContent{
+			Content: []byte(`content zipped for unit testing`),
+			Name:    "test"})
 
 		source, err := New(r, Option{
 			OutputCSVFile: ".ignore/folder-do-not-exist",
@@ -83,8 +122,10 @@ func TestNew(t *testing.T) {
 		}
 	})
 	t.Run("Should be ok with the creation csv file", func(t *testing.T) {
-		defer helpRemoveFile(t, fmt.Sprintf("%s/%s", testFolder, testCSVFile))
-		r := helpCreateZipReader(t, zipContent{content: []byte(`content zipped for unit testing`), name: "test"})
+		defer helptest.RemoveFile(t, fmt.Sprintf("%s/%s", testFolder, testCSVFile))
+		r := helptest.CreateZipReader(t, helptest.ZipContent{
+			Content: []byte(`content zipped for unit testing`),
+			Name:    "test"})
 
 		source, err := New(r, Option{
 			OutputCSVFile: testFolder,
@@ -96,8 +137,10 @@ func TestNew(t *testing.T) {
 		}
 	})
 	t.Run("Should be ok with the creation zip file", func(t *testing.T) {
-		defer helpRemoveFile(t, fmt.Sprintf("%s/%s", testFolder, testZipFile))
-		r := helpCreateZipReader(t, zipContent{content: []byte(`content zipped for unit testing`), name: "test"})
+		defer helptest.RemoveFile(t, fmt.Sprintf("%s/%s", testFolder, testZipFile))
+		r := helptest.CreateZipReader(t, helptest.ZipContent{
+			Content: []byte(`content zipped for unit testing`),
+			Name:    "test"})
 
 		source, err := New(r, Option{
 			OutputZipFile: testFolder,
@@ -109,7 +152,9 @@ func TestNew(t *testing.T) {
 		}
 	})
 	t.Run("Should be ok without creation files", func(t *testing.T) {
-		r := helpCreateZipReader(t, zipContent{content: []byte(`content zipped for unit testing`), name: "test"})
+		r := helptest.CreateZipReader(t, helptest.ZipContent{
+			Content: []byte(`content zipped for unit testing`),
+			Name:    "test"})
 
 		source, err := New(r, Option{}, "no-name")
 		defer helpCloseSourceReader(t, source)

@@ -3,6 +3,8 @@
 <!-- Badge section [godoc / code quality / ci / last Tag / License ]-->
 <!-- Documentation go.pkg -->
 [![Go Reference](https://pkg.go.dev/badge/github.com/winning-number/fdj-sdk-lotto.svg)](https://pkg.go.dev/github.com/winning-number/fdj-sdk-lotto)
+<!-- Build tag (git action) -->
+![Build status](https://github.com/winning-number/fdj-sdk-lotto/actions/workflows/goci.yml/badge.svg)
 
 <!-- Description section -->
 This package is a sdk of the lotto (FRANCAISE DES JEUX) and could get the full draws history. It get the draws history provided from [any csv files](https://www.fdj.fr/jeux-de-tirage/loto/historique) and convert them in a standardized Draw format.
@@ -123,6 +125,7 @@ The package structure is classic with a flat mode for the lotto driver. They are
 * `csvparser` which is a particular parser of csvfile with a strict decoder (column and header) to avoid to parse a old type like a new for example and lost data(s).
 * `httpclient` which is a basic http client to get the csv file from the `FDJ` api. Probably this package will be move in another repository in the future.
 * `reader` which read zip archive and csv file with a grace reader closer. It could record the downloaded files inside a folder if you want.
+* `helptest` provide some functions to help the unit tests
 
 ## Contributing
 
@@ -137,8 +140,8 @@ $ make test
 # ...
 # tests executed !
 $ make lint
-# ... 
-# done
+# golangci-lint run --skip-dirs mocks 
+# WARN [linters context] ... is disabled because of generics
 ```
 
 ## License

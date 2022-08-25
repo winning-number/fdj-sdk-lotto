@@ -148,7 +148,7 @@ func (l lotto) Draws(f Filter) []Draw {
 	return matchesDraws
 }
 
-//nolint:funlen,gocognit,gocyclo // prefer keep the loading sources together
+//nolint:gocognit,gocyclo // prefer keep the loading sources together
 func (l *lotto) loadingSources(option LoadAPIOption) error {
 	// ...
 	var err error
@@ -234,7 +234,7 @@ func (l *lotto) loadingSource(option LoadAPIOption, filePath string, drawType Dr
 func (l *lotto) sourceReader(option LoadAPIOption, filePath string) (reader.Reader, error) {
 	var resp *http.Response
 	var req *http.Request
-	var r reader.Reader
+	var sourceReader reader.Reader
 	var err error
 
 	url := fmt.Sprintf("%s/%s", BasePath, filePath)
@@ -246,11 +246,11 @@ func (l *lotto) sourceReader(option LoadAPIOption, filePath string) (reader.Read
 	}
 	defer resp.Body.Close()
 
-	if r, err = reader.New(resp.Body, option.SaveSources, filePath); err != nil {
+	if sourceReader, err = reader.New(resp.Body, option.SaveSources, filePath); err != nil {
 		return nil, err
 	}
 
-	return r, nil
+	return sourceReader, nil
 }
 
 /*

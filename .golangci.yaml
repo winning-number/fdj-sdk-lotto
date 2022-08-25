@@ -619,6 +619,7 @@ linters-settings:
       - r io.ReadCloser
       - t *testing.T
       - w http.ResponseWriter
+      - w io.Writer
       - wg sync.WaitGroup
       - T any
 
