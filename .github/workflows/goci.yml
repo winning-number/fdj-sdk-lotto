@@ -1,4 +1,4 @@
-name: golangCI by gofast-pkg
+name: ci
 
 on:
   push:

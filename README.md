@@ -1,22 +1,13 @@
 # FDJ-SDK-LOTTO
 
-<!-- Badge section [godoc / code quality / ci / last Tag / License ]-->
-<!-- Documentation go.pkg -->
-[![Go Reference](https://pkg.go.dev/badge/github.com/winning-number/fdj-sdk-lotto.svg)](https://pkg.go.dev/github.com/winning-number/fdj-sdk-lotto)
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fwinning-number%2Ffdj-sdk-lotto.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fwinning-number%2Ffdj-sdk-lotto?ref=badge_shield)
-<!-- Build tag (git action) -->
+<!-- Badge section [ci - codecov - release - godoc - code quality - codebeat - license - fossa ]-->
 ![Build status](https://github.com/winning-number/fdj-sdk-lotto/actions/workflows/goci.yml/badge.svg)
-<!-- CodeCoverage -->
 [![codecov](https://codecov.io/gh/winning-number/fdj-sdk-lotto/branch/main/graph/badge.svg?token=7TCE3QB21E)](https://codecov.io/gh/winning-number/fdj-sdk-lotto)
-<!-- Go report notation -->
-[![Go Report Card](https://goreportcard.com/badge/github.com/winning-number/fdj-sdk-lotto)](https://goreportcard.com/report/github.com/winning-number/fdj-sdk-lotto)
-<!-- CodeBeat -->
-[![codebeat badge](https://codebeat.co/badges/6d11dead-fa65-4f84-b72d-e1218694a0ec)](https://codebeat.co/projects/github-com-winning-number-fdj-sdk-lotto-main)
-<!-- Release -->
 [![Release](https://img.shields.io/github/release/winning-number/fdj-sdk-lotto.svg?style=flat-square)](https://github.com/winning-number/fdj-sdk-lotto/releases)
-<!-- FOSSA -->
+[![Go Reference](https://pkg.go.dev/badge/github.com/winning-number/fdj-sdk-lotto.svg)](https://pkg.go.dev/github.com/winning-number/fdj-sdk-lotto)
+[![Go Report Card](https://goreportcard.com/badge/github.com/winning-number/fdj-sdk-lotto)](https://goreportcard.com/report/github.com/winning-number/fdj-sdk-lotto)
+[![codebeat badge](https://codebeat.co/badges/6d11dead-fa65-4f84-b72d-e1218694a0ec)](https://codebeat.co/projects/github-com-winning-number-fdj-sdk-lotto-main)
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fwinning-number%2Ffdj-sdk-lotto.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fwinning-number%2Ffdj-sdk-lotto?ref=badge_shield)
-<!-- License -->
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://raw.githubusercontent.com/winning-number/fdj-sdk-lotto/main/LICENSE.md)
 
 <!-- Description section -->
@@ -160,6 +151,5 @@ $ make lint
 ## License
 
 [GNU GPL v3](https://choosealicense.com/licenses/gpl-3.0/)
-
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fwinning-number%2Ffdj-sdk-lotto.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fwinning-number%2Ffdj-sdk-lotto?ref=badge_large)
