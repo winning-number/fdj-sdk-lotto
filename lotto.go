@@ -7,14 +7,33 @@ package lotto
 import (
 	"context"
 	"fmt"
-	"log"
+	"io"
 	"net/http"
-	"os"
-	"sort"
-	"strings"
+
+	"github.com/pkg/errors"
 
 	"github.com/winning-number/fdjapi-lotto/csvparser"
 	"github.com/winning-number/fdjapi-lotto/httpclient"
+	"github.com/winning-number/fdjapi-lotto/reader"
+)
+
+// sources zip files to get history draw(s)
+const (
+	GrandLoto       = "grandloto_201912.zip"
+	GrandLotoNoel   = "lotonoel_201703.zip"
+	SuperLoto199605 = "superloto_199605.zip"
+	SuperLoto200810 = "superloto_200810.zip"
+	SuperLoto201703 = "superloto_201703.zip"
+	SuperLoto201907 = "superloto_201907.zip"
+	Loto197605      = "loto_197605.zip"
+	Loto200810      = "loto_200810.zip"
+	Loto201703      = "loto_201703.zip"
+	Loto201902      = "loto_201902.zip"
+	Loto201911      = "loto_201911.zip" // last update
+)
+
+const (
+	BasePath = "https://media.fdj.fr/static/csv/loto"
 )
 
 // DrawTypeKey for the csvparser.ContextRecord
@@ -22,6 +41,8 @@ const (
 	DrawTypeKey = "DrawType"
 )
 
+// LoadAPISourceDisable allow to disable the download of specific source
+// By default all sources should be download
 type LoadAPISourceDisable struct {
 	GrandLoto       bool
 	GrandLotoNoel   bool
@@ -36,18 +57,22 @@ type LoadAPISourceDisable struct {
 	Loto201911      bool
 }
 
+// LoadAPIOption allow to disable specific source from the load csv files (see: LoadAPISourceDisable)
+// If OutputZipFile is define, a copy of the zip content should be write in the path
+// If OutputCSVFile is define, a copy of the csv content should be wrtie in the path
 type LoadAPIOption struct {
 	SourceDisable LoadAPISourceDisable
-	OutputZipFile string
-	OutputCSVFile string
+	SaveSources   reader.Option
 }
 
 // Lotto interface could get the full history from the fdj archive or parse them directly from a csv
 // LoadAPI and LoadCSV add draws inside the internal draws list and order them by date and id
+//
+//go:generate mockery --name=Lotto --output=mocks --filename=lotto.go --outpkg=mocks
 type Lotto interface {
 	// Read history from the FDJ api with filter to select the sources
 	LoadAPI(option LoadAPIOption) error
-	LoadCSV(filepath string, drawType DrawType, drawVersion DrawVersion) error
+	LoadCSV(r io.Reader, drawType DrawType, drawVersion DrawVersion) (csvparser.Warning, error)
 
 	DrawCount(filter Filter) int
 	Draws(filter Filter) []Draw
@@ -73,13 +98,11 @@ func (l *lotto) LoadAPI(option LoadAPIOption) error {
 	if err = l.loadingSources(option); err != nil {
 		return err
 	}
-	l.orderDraws()
 
 	return nil
 }
 
-func (l *lotto) LoadCSV(filepath string, drawType DrawType, drawVersion DrawVersion) error {
-	var file *os.File
+func (l *lotto) LoadCSV(r io.Reader, drawType DrawType, drawVersion DrawVersion) (csvparser.Warning, error) {
 	var err error
 	var warn csvparser.Warning
 
@@ -96,20 +119,14 @@ func (l *lotto) LoadCSV(filepath string, drawType DrawType, drawVersion DrawVers
 	case DrawV4:
 		conf.CreateObject = func() any { return &DrawCSV4{} }
 	default:
-		return ErrDrawVersion
+		return nil, ErrDrawVersion
 	}
 
-	if file, err = os.Open(filepath); err != nil {
-		return err
+	if warn, err = csvparser.CSVParse(r, conf); err != nil {
+		return nil, err
 	}
-	defer file.Close()
-	if warn, err = csvparser.CSVParse(file, conf); err != nil {
-		return err
-	}
-	printWarnDecode(warn, filepath)
-	l.orderDraws()
 
-	return nil
+	return warn, nil
 }
 
 func (l *lotto) DrawCount(filter Filter) int {
@@ -131,99 +148,63 @@ func (l lotto) Draws(f Filter) []Draw {
 	return matchesDraws
 }
 
-func (l *lotto) orderDraws() {
-	sort.SliceStable(l.draws, func(i, j int) bool {
-		if l.draws[i].Metadata.Date.After(l.draws[j].Metadata.Date) {
-			return true
-		}
-		if strings.Compare(l.draws[i].Metadata.ID, l.draws[j].Metadata.ID) == 0 &&
-			l.draws[i].Metadata.TirageOrder > l.draws[j].Metadata.TirageOrder {
-			return true
-		}
-
-		return false
-	})
-}
-
 //nolint:funlen,gocognit,gocyclo // prefer keep the loading sources together
 func (l *lotto) loadingSources(option LoadAPIOption) error {
 	// ...
 	var err error
 
 	if !option.SourceDisable.GrandLoto {
-		conf := l.csvParseConfiguration(DrawGrandLottoType)
-		conf.CreateObject = func() any { return &DrawCSV3{} }
-		if err = l.loadingSource(option, conf, GrandLoto); err != nil {
+		if err = l.loadingSource(option, GrandLoto, DrawGrandLottoType, DrawV3); err != nil {
 			return err
 		}
 	}
 	if !option.SourceDisable.GrandLotoNoel {
-		conf := l.csvParseConfiguration(DrawXmasType)
-		conf.CreateObject = func() any { return &DrawCSV3{} }
-		if err = l.loadingSource(option, conf, GrandLotoNoel); err != nil {
+		if err = l.loadingSource(option, GrandLotoNoel, DrawXmasLottoType, DrawV3); err != nil {
 			return err
 		}
 	}
 	if !option.SourceDisable.SuperLoto199605 {
-		conf := l.csvParseConfiguration(DrawSuperLottoType)
-		conf.CreateObject = func() any { return &DrawCSV0{} }
-		if err = l.loadingSource(option, conf, SuperLoto199605); err != nil {
+		if err = l.loadingSource(option, SuperLoto199605, DrawSuperLottoType, DrawV0); err != nil {
 			return err
 		}
 	}
 	if !option.SourceDisable.SuperLoto200810 {
-		conf := l.csvParseConfiguration(DrawSuperLottoType)
-		conf.CreateObject = func() any { return &DrawCSV2{} }
-		if err = l.loadingSource(option, conf, SuperLoto200810); err != nil {
+		if err = l.loadingSource(option, SuperLoto200810, DrawSuperLottoType, DrawV2); err != nil {
 			return err
 		}
 	}
 	if !option.SourceDisable.SuperLoto201703 {
-		conf := l.csvParseConfiguration(DrawSuperLottoType)
-		conf.CreateObject = func() any { return &DrawCSV3{} }
-		if err = l.loadingSource(option, conf, SuperLoto201703); err != nil {
+		if err = l.loadingSource(option, SuperLoto201703, DrawSuperLottoType, DrawV3); err != nil {
 			return err
 		}
 	}
 	if !option.SourceDisable.SuperLoto201907 {
-		conf := l.csvParseConfiguration(DrawSuperLottoType)
-		conf.CreateObject = func() any { return &DrawCSV3{} }
-		if err = l.loadingSource(option, conf, SuperLoto201907); err != nil {
+		if err = l.loadingSource(option, SuperLoto201907, DrawSuperLottoType, DrawV3); err != nil {
 			return err
 		}
 	}
 	if !option.SourceDisable.Loto197605 {
-		conf := l.csvParseConfiguration(DrawLottoType)
-		conf.CreateObject = func() any { return &DrawCSV1{} }
-		if err = l.loadingSource(option, conf, Loto197605); err != nil {
+		if err = l.loadingSource(option, Loto197605, DrawLottoType, DrawV1); err != nil {
 			return err
 		}
 	}
 	if !option.SourceDisable.Loto200810 {
-		conf := l.csvParseConfiguration(DrawLottoType)
-		conf.CreateObject = func() any { return &DrawCSV2{} }
-		if err = l.loadingSource(option, conf, Loto200810); err != nil {
+		if err = l.loadingSource(option, Loto200810, DrawLottoType, DrawV2); err != nil {
 			return err
 		}
 	}
 	if !option.SourceDisable.Loto201703 {
-		conf := l.csvParseConfiguration(DrawLottoType)
-		conf.CreateObject = func() any { return &DrawCSV3{} }
-		if err = l.loadingSource(option, conf, Loto201703); err != nil {
+		if err = l.loadingSource(option, Loto201703, DrawLottoType, DrawV3); err != nil {
 			return err
 		}
 	}
 	if !option.SourceDisable.Loto201902 {
-		conf := l.csvParseConfiguration(DrawLottoType)
-		conf.CreateObject = func() any { return &DrawCSV3{} }
-		if err = l.loadingSource(option, conf, Loto201902); err != nil {
+		if err = l.loadingSource(option, Loto201902, DrawLottoType, DrawV3); err != nil {
 			return err
 		}
 	}
 	if !option.SourceDisable.Loto201911 {
-		conf := l.csvParseConfiguration(DrawLottoType)
-		conf.CreateObject = func() any { return &DrawCSV4{} }
-		if err = l.loadingSource(option, conf, Loto201911); err != nil {
+		if err = l.loadingSource(option, Loto201911, DrawLottoType, DrawV4); err != nil {
 			return err
 		}
 	}
@@ -231,37 +212,29 @@ func (l *lotto) loadingSources(option LoadAPIOption) error {
 	return nil
 }
 
-func (l *lotto) loadingSource(option LoadAPIOption, conf csvparser.ParseConfig, filePath string) error {
-	var source SourceReader
+func (l *lotto) loadingSource(option LoadAPIOption, filePath string, drawType DrawType, drawVersion DrawVersion) error {
+	var reader reader.Reader
 	var err error
 	var warn csvparser.Warning
 
-	if source, err = l.sourceReader(option, filePath); err != nil {
+	if reader, err = l.sourceReader(option, filePath); err != nil {
 		return err
 	}
-	defer source.Close()
-	if warn, err = csvparser.CSVParse(source.CSVReader(), conf); err != nil {
+	defer reader.Close()
+	if warn, err = l.LoadCSV(reader.CSVReader(), drawType, drawVersion); err != nil {
 		return err
 	}
-	printWarnDecode(warn, filePath)
+	if len(warn) > 0 {
+		return errors.Wrap(ErrInvalidFDJSource, fmt.Sprintf("header with values: %v", warn))
+	}
 
 	return nil
 }
 
-func printWarnDecode(warn csvparser.Warning, source string) {
-	if warn == nil {
-		return
-	}
-	log.Default().Printf("Warning for the source %s\n", source)
-	for k, v := range warn {
-		log.Default().Printf("header %s unused with the value %s\n", k, v)
-	}
-}
-
-func (l *lotto) sourceReader(option LoadAPIOption, filePath string) (SourceReader, error) {
+func (l *lotto) sourceReader(option LoadAPIOption, filePath string) (reader.Reader, error) {
 	var resp *http.Response
 	var req *http.Request
-	var source SourceReader
+	var r reader.Reader
 	var err error
 
 	url := fmt.Sprintf("%s/%s", BasePath, filePath)
@@ -273,11 +246,11 @@ func (l *lotto) sourceReader(option LoadAPIOption, filePath string) (SourceReade
 	}
 	defer resp.Body.Close()
 
-	if source, err = newSourceReader(resp.Body, option, filePath); err != nil {
+	if r, err = reader.New(resp.Body, option.SaveSources, filePath); err != nil {
 		return nil, err
 	}
 
-	return source, nil
+	return r, nil
 }
 
 /*

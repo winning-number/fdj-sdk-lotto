@@ -62,7 +62,7 @@ func DayConverter(day string) (Day, error) {
 	case dayConverterSunday, dayConverterShortSunday:
 		return DaySunday, nil
 	default:
-		return "", errors.New("day type unknown")
+		return "", ErrDayUnknown
 	}
 }
 
@@ -87,11 +87,11 @@ func MoneyConverter(input string) (float64, error) {
 	var err error
 
 	if input == "" {
-		return 0.0, nil
+		return 0.0, ErrInvalidMoney
 	}
 	input = strings.Replace(input, ",", ".", 1)
 	if ret, err = strconv.ParseFloat(input, bitSize); err != nil {
-		return 0.0, err
+		return 0.0, errors.Wrap(ErrMoneyConverter, err.Error())
 	}
 
 	return ret, nil
@@ -101,8 +101,8 @@ func DrawTypeConverter(name string) (DrawType, error) {
 	switch name {
 	case string(DrawGrandLottoType):
 		return DrawGrandLottoType, nil
-	case string(DrawXmasType):
-		return DrawXmasType, nil
+	case string(DrawXmasLottoType):
+		return DrawXmasLottoType, nil
 	case string(DrawSuperLottoType):
 		return DrawSuperLottoType, nil
 	case string(DrawLottoType):

@@ -1,12 +1,21 @@
 package lotto
 
-import "time"
+import (
+	"sort"
+	"time"
+)
+
+// Order type
+const (
+	OrderASC OrderType = iota
+	OrderDESC
+)
 
 // DrawType
 const (
 	DrawSuperLottoType DrawType = "super-lotto"
 	DrawGrandLottoType DrawType = "grand-lotto"
-	DrawXmasType       DrawType = "xmas-lotto"
+	DrawXmasLottoType  DrawType = "xmas-lotto"
 	DrawLottoType      DrawType = "new-lotto"
 )
 
@@ -33,6 +42,8 @@ const (
 const (
 	CurrencyEur Currency = "EUR"
 )
+
+type OrderType uint8
 
 type DrawRecorder interface {
 	ConvertDraw(drawType DrawType) (Draw, error)
@@ -92,4 +103,44 @@ type Metadata struct {
 	ForclosureDate time.Time
 	Day            Day
 	Currency       Currency
+}
+
+func OrderDraws(draws *[]Draw, order OrderType) {
+	if order == OrderASC {
+		orderDrawsASC(draws)
+	} else {
+		orderDrawsDESC(draws)
+	}
+}
+
+// orderDrawsASC from less to more
+// order from recentest to oldest
+func orderDrawsASC(draws *[]Draw) {
+	sort.SliceStable(*draws, func(i, j int) bool {
+		if (*draws)[i].Metadata.Date.After((*draws)[j].Metadata.Date) {
+			return true
+		}
+		if (*draws)[i].Metadata.Date.Equal((*draws)[j].Metadata.Date) &&
+			(*draws)[i].Metadata.TirageOrder > (*draws)[j].Metadata.TirageOrder {
+			return true
+		}
+
+		return false
+	})
+}
+
+// orderDrawsDESC from more to less
+// order from oldest to recentest
+func orderDrawsDESC(draws *[]Draw) {
+	sort.SliceStable(*draws, func(i, j int) bool {
+		if (*draws)[i].Metadata.Date.Before((*draws)[j].Metadata.Date) {
+			return true
+		}
+		if (*draws)[i].Metadata.Date.Equal((*draws)[j].Metadata.Date) &&
+			(*draws)[i].Metadata.TirageOrder < (*draws)[j].Metadata.TirageOrder {
+			return true
+		}
+
+		return false
+	})
 }

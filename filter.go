@@ -5,7 +5,7 @@ type Filter struct {
 
 	SuperLotto   bool
 	GrandLotto   bool
-	XmaxLotto    bool
+	XmasLotto    bool
 	ClassicLotto bool
 
 	OldLotto bool
@@ -13,20 +13,20 @@ type Filter struct {
 
 // MatchWithDraw valid the draw parameter with the Filter.
 func (o Filter) MatchWithDraw(draw *Draw) bool {
-	if !o.MatchDay(draw.Metadata.Day) {
+	if !o.matchDay(draw.Metadata.Day) {
 		return false
 	}
-	if !o.MatchOldLotto(draw.Metadata) {
+	if !o.matchOldLotto(draw.Metadata) {
 		return false
 	}
-	if !o.MatchDrawType(draw.Metadata) {
+	if !o.matchDrawType(draw.Metadata) {
 		return false
 	}
 
 	return true
 }
 
-func (o Filter) MatchDay(day Day) bool {
+func (o Filter) matchDay(day Day) bool {
 	if string(o.Day) != "" && o.Day != day {
 		return false
 	}
@@ -34,7 +34,7 @@ func (o Filter) MatchDay(day Day) bool {
 	return true
 }
 
-func (o Filter) MatchOldLotto(meta Metadata) bool {
+func (o Filter) matchOldLotto(meta Metadata) bool {
 	if !o.OldLotto && meta.OldType {
 		return false
 	}
@@ -42,7 +42,7 @@ func (o Filter) MatchOldLotto(meta Metadata) bool {
 	return true
 }
 
-func (o Filter) MatchDrawType(meta Metadata) bool {
+func (o Filter) matchDrawType(meta Metadata) bool {
 	switch meta.DrawType {
 	case DrawSuperLottoType:
 		if !o.SuperLotto {
@@ -52,8 +52,8 @@ func (o Filter) MatchDrawType(meta Metadata) bool {
 		if !o.GrandLotto {
 			return false
 		}
-	case DrawXmasType:
-		if !o.XmaxLotto {
+	case DrawXmasLottoType:
+		if !o.XmasLotto {
 			return false
 		}
 	case DrawLottoType:
