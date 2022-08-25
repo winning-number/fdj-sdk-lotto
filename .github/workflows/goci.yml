@@ -1,0 +1,34 @@
+name: golangCI by gofast-pkg
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.19
+    
+    - name: Install
+      run: make install
+
+    - name: Tests
+      run: make test
+
+    - name: Lints
+      run: make lint
+
+    - name: Build
+      run: make build
+
+    - name: Coverage
+      run: bash <(curl -s https://codecov.io/bash)

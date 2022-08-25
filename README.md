@@ -1,6 +1,8 @@
 # FDJ-SDK-LOTTO
 
 <!-- Badge section [godoc / code quality / ci / last Tag / License ]-->
+<!-- Documentation go.pkg -->
+[![Go Reference](https://pkg.go.dev/badge/github.com/winning-number/fdj-sdk-lotto.svg)](https://pkg.go.dev/github.com/winning-number/fdj-sdk-lotto)
 
 <!-- Description section -->
 This package is a sdk of the lotto (FRANCAISE DES JEUX) and could get the full draws history. It get the draws history provided from [any csv files](https://www.fdj.fr/jeux-de-tirage/loto/historique) and convert them in a standardized Draw format.
