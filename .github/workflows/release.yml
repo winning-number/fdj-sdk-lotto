@@ -1,0 +1,32 @@
+name: release
+
+on:
+  workflow_run:
+    workflows: ["ci"]
+    branches: [main]
+    types:
+      - completed
+
+jobs:
+
+  release:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Get tag
+        run: |
+          cat CHANGELOG.md | grep "##" | sed 's/## //g' > TAG
+          echo "RELEASE_TAG=$(cat TAG)" >> $GITHUB_ENV
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: "${{ env.RELEASE_TAG }}"
+          prerelease: false
+          draft: false
+          body_path: CHANGELOG.md
