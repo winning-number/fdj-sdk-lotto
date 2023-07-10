@@ -2,7 +2,7 @@
 
 <!-- Badge section [ci - codecov - release - godoc - code quality - codebeat - license - fossa ]-->
 [![Static Badge](https://img.shields.io/badge/project%20use%20codesystem-green?link=https%3A%2F%2Fgithub.com%2Fgofast-pkg%2Fcodesystem)](https://github.com/gofast-pkg/codesystem)
-![Build status](https://github.com/winning-number/fdj-sdk-lotto/actions/workflows/goci.yml/badge.svg)
+![Build status](https://github.com/winning-number/fdj-sdk-lotto/actions/workflows/ci.yml/badge.svg)
 [![codecov](https://codecov.io/gh/winning-number/fdj-sdk-lotto/branch/main/graph/badge.svg?token=7TCE3QB21E)](https://codecov.io/gh/winning-number/fdj-sdk-lotto)
 [![Release](https://img.shields.io/github/release/winning-number/fdj-sdk-lotto.svg?style=flat-square)](https://github.com/winning-number/fdj-sdk-lotto/releases)
 [![Go Reference](https://pkg.go.dev/badge/github.com/winning-number/fdj-sdk-lotto.svg)](https://pkg.go.dev/github.com/winning-number/fdj-sdk-lotto)
