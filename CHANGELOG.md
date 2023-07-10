@@ -1,9 +1,5 @@
 # CHANGELOG
 
-## v1.0.0
+## v1.0.1
 
-- refact the fdj sdk for more robustness
-- improve unit tests
-- improve documentation
-- update mocks
-- implement codesystem
+- fix build badge from the README.md
