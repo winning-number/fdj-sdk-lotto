@@ -4,86 +4,87 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/winning-number/fdj-sdk-lotto/draw"
 )
 
-func TestFilter_MatchWithDraw(t *testing.T) {
-	t.Run("Should not match the day", func(t *testing.T) {
+func TestFilter_Match(t *testing.T) {
+	t.Run("Should not match with day ", func(t *testing.T) {
 		filter := Filter{
 			Day: "bad-day",
 		}
-		draw := Draw{Metadata: Metadata{
-			Day: DayMonday,
+		draw := draw.Draw{Metadata: draw.Metadata{
+			Day: draw.DayMonday,
 		}}
-		ok := filter.MatchWithDraw(&draw)
+		ok := filter.Match(&draw)
 		assert.False(t, ok)
 	})
-	t.Run("Should not match old type", func(t *testing.T) {
+	t.Run("Should not match with old lotto", func(t *testing.T) {
 		filter := Filter{
 			OldLotto: false,
 		}
-		draw := Draw{Metadata: Metadata{
-			Day:     DayMonday,
+		draw := draw.Draw{Metadata: draw.Metadata{
+			Day:     draw.DayMonday,
 			OldType: true,
 		}}
-		ok := filter.MatchWithDraw(&draw)
+		ok := filter.Match(&draw)
 		assert.False(t, ok)
 	})
-	t.Run("Should not match super lotto type", func(t *testing.T) {
+	t.Run("Should not match with the super lotto type", func(t *testing.T) {
 		filter := Filter{
 			SuperLotto: false,
 		}
-		draw := Draw{Metadata: Metadata{
-			Day:      DayMonday,
-			DrawType: DrawSuperLottoType,
+		draw := draw.Draw{Metadata: draw.Metadata{
+			Day:      draw.DayMonday,
+			DrawType: draw.SuperLottoType,
 		}}
-		ok := filter.MatchWithDraw(&draw)
+		ok := filter.Match(&draw)
 		assert.False(t, ok)
 	})
-	t.Run("Should not match grand lotto type", func(t *testing.T) {
+	t.Run("Should not match with the grand lotto type", func(t *testing.T) {
 		filter := Filter{
 			GrandLotto: false,
 		}
-		draw := Draw{Metadata: Metadata{
-			Day:      DayMonday,
-			DrawType: DrawGrandLottoType,
+		draw := draw.Draw{Metadata: draw.Metadata{
+			Day:      draw.DayMonday,
+			DrawType: draw.GrandLottoType,
 		}}
-		ok := filter.MatchWithDraw(&draw)
+		ok := filter.Match(&draw)
 		assert.False(t, ok)
 	})
-	t.Run("Should not match xmas lotto type", func(t *testing.T) {
+	t.Run("Should not match with the xmas lotto type", func(t *testing.T) {
 		filter := Filter{
 			XmasLotto: false,
 		}
-		draw := Draw{Metadata: Metadata{
-			Day:      DayMonday,
-			DrawType: DrawXmasLottoType,
+		draw := draw.Draw{Metadata: draw.Metadata{
+			Day:      draw.DayMonday,
+			DrawType: draw.XmasLottoType,
 		}}
-		ok := filter.MatchWithDraw(&draw)
+		ok := filter.Match(&draw)
 		assert.False(t, ok)
 	})
-	t.Run("Should not match classic lotto type", func(t *testing.T) {
+	t.Run("Should not match with the classic lotto type", func(t *testing.T) {
 		filter := Filter{
 			ClassicLotto: false,
 		}
-		draw := Draw{Metadata: Metadata{
-			Day:      DayMonday,
-			DrawType: DrawLottoType,
+		draw := draw.Draw{Metadata: draw.Metadata{
+			Day:      draw.DayMonday,
+			DrawType: draw.LottoType,
 		}}
-		ok := filter.MatchWithDraw(&draw)
+		ok := filter.Match(&draw)
 		assert.False(t, ok)
 	})
-	t.Run("Should match specific draw", func(t *testing.T) {
+	t.Run("Should match the draw", func(t *testing.T) {
 		filter := Filter{
-			Day:          DayMonday,
+			Day:          draw.DayMonday,
 			ClassicLotto: true,
 			OldLotto:     true,
 		}
-		draw := Draw{Metadata: Metadata{
-			Day:      DayMonday,
-			DrawType: DrawLottoType,
+		draw := draw.Draw{Metadata: draw.Metadata{
+			Day:      draw.DayMonday,
+			DrawType: draw.LottoType,
 			OldType:  true,
 		}}
-		ok := filter.MatchWithDraw(&draw)
+		ok := filter.Match(&draw)
 		assert.True(t, ok)
 	})
 }

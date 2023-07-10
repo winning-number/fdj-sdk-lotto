@@ -1,7 +1,17 @@
 package lotto
 
+import "github.com/winning-number/fdj-sdk-lotto/draw"
+
+// Filter is the filter of draw.
+// if day is empty, it will match all day.
+// if old lotto is false, it will not match old lotto, otherwise it will match all.
+// if super lotto is false, it will not match super lotto.
+// if grand lotto is false, it will not match grand lotto.
+// if xmas lotto is false, it will not match xmas lotto.
+// if classic lotto is false, it will not match classic lotto.
+// classic lotto is the default draw type (from november 2019).
 type Filter struct {
-	Day Day
+	Day draw.Day
 
 	SuperLotto   bool
 	GrandLotto   bool
@@ -11,53 +21,53 @@ type Filter struct {
 	OldLotto bool
 }
 
-// MatchWithDraw valid the draw parameter with the Filter.
-func (o Filter) MatchWithDraw(draw *Draw) bool {
-	if !o.matchDay(draw.Metadata.Day) {
+// Match returns true if the draw match the filter.
+func (f Filter) Match(draw *draw.Draw) bool {
+	if !f.matchDay(draw.Metadata.Day) {
 		return false
 	}
-	if !o.matchOldLotto(draw.Metadata) {
+	if !f.matchOldLotto(draw.Metadata) {
 		return false
 	}
-	if !o.matchDrawType(draw.Metadata) {
-		return false
-	}
-
-	return true
-}
-
-func (o Filter) matchDay(day Day) bool {
-	if string(o.Day) != "" && o.Day != day {
+	if !f.matchDrawType(draw.Metadata) {
 		return false
 	}
 
 	return true
 }
 
-func (o Filter) matchOldLotto(meta Metadata) bool {
-	if !o.OldLotto && meta.OldType {
+func (f Filter) matchDay(day draw.Day) bool {
+	if string(f.Day) != "" && f.Day != day {
 		return false
 	}
 
 	return true
 }
 
-func (o Filter) matchDrawType(meta Metadata) bool {
+func (f Filter) matchOldLotto(meta draw.Metadata) bool {
+	if !f.OldLotto && meta.OldType {
+		return false
+	}
+
+	return true
+}
+
+func (f Filter) matchDrawType(meta draw.Metadata) bool {
 	switch meta.DrawType {
-	case DrawSuperLottoType:
-		if !o.SuperLotto {
+	case draw.SuperLottoType:
+		if !f.SuperLotto {
 			return false
 		}
-	case DrawGrandLottoType:
-		if !o.GrandLotto {
+	case draw.GrandLottoType:
+		if !f.GrandLotto {
 			return false
 		}
-	case DrawXmasLottoType:
-		if !o.XmasLotto {
+	case draw.XmasLottoType:
+		if !f.XmasLotto {
 			return false
 		}
-	case DrawLottoType:
-		if !o.ClassicLotto {
+	case draw.LottoType:
+		if !f.ClassicLotto {
 			return false
 		}
 	}

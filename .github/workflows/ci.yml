@@ -1,0 +1,54 @@
+name: ci
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  codesystem:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Check codesystem
+      uses: gofast-pkg/codesystem@main
+      with:
+        type: 'lib'
+        context: '.'
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.20'
+    
+    - name: Install
+      run: |
+        make dep
+        make ci-tool
+
+    - name: Tests
+      run: make tests
+
+    - name: Lints
+      run: make lint
+
+    - name: Build
+      run: make build
+
+    - name: Coverage
+      uses: codecov/codecov-action@v3
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        directory: .ignore/
+        files: coverage.txt
+        fail_ci_if_error: true
+        flags: unit-testing
+        name: codecov-umbrella
+        verbose: true
