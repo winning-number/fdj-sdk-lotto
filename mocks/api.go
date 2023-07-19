@@ -243,6 +243,38 @@ func (_c *API_NDraws_Call) RunAndReturn(run func(lotto.Filter) int64) *API_NDraw
 	return _c
 }
 
+// Reset provides a mock function with given fields:
+func (_m *API) Reset() {
+	_m.Called()
+}
+
+// API_Reset_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Reset'
+type API_Reset_Call struct {
+	*mock.Call
+}
+
+// Reset is a helper method to define mock.On call
+func (_e *API_Expecter) Reset() *API_Reset_Call {
+	return &API_Reset_Call{Call: _e.mock.On("Reset")}
+}
+
+func (_c *API_Reset_Call) Run(run func()) *API_Reset_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *API_Reset_Call) Return() *API_Reset_Call {
+	_c.Call.Return()
+	return _c
+}
+
+func (_c *API_Reset_Call) RunAndReturn(run func()) *API_Reset_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // SourceUpdatedAt provides a mock function with given fields: ctx, source
 func (_m *API) SourceUpdatedAt(ctx context.Context, source lotto.SourceInfo) (time.Time, error) {
 	ret := _m.Called(ctx, source)

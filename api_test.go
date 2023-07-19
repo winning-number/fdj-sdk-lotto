@@ -726,3 +726,20 @@ func TestAPI_Draws(t *testing.T) {
 		assert.Len(t, a.draws, 2)
 	})
 }
+
+func TestAPI_Reset(t *testing.T) {
+	t.Run("Should reset the draws list", func(t *testing.T) {
+		a := &api{draws: []draw.Draw{{
+			Metadata: draw.Metadata{
+				DrawType: draw.LottoType,
+			},
+		}, {
+			Metadata: draw.Metadata{
+				DrawType: draw.LottoType,
+			},
+		}}}
+
+		a.Reset()
+		assert.Len(t, a.draws, 0)
+	})
+}

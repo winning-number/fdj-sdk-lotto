@@ -46,6 +46,8 @@ type API interface {
 	NDraws(filter Filter) int64
 	// Draws returns the draws depending on the filter
 	Draws(filter Filter, order draw.OrderType) []draw.Draw
+	// Reset resets the draws records
+	Reset()
 }
 
 type api struct {
@@ -237,4 +239,8 @@ func (a api) requestSource(ctx context.Context, source SourceInfo) (zip.Reader, 
 	}
 
 	return reader, nil
+}
+
+func (a *api) Reset() {
+	a.draws = []draw.Draw{}
 }

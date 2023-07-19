@@ -30,3 +30,5 @@ jobs:
           prerelease: false
           draft: false
           body_path: CHANGELOG.md
+          files: |
+            ./.ignore/*
