@@ -102,7 +102,7 @@ utest: --create-tmp-folders
 .PHONY: bench
 bench:
 	@echo "benchmarks running ..."
-	@go test -count=1 -run "^$$" -benchmem -benchtime 1000x -bench "^(Benchmark).*" -v ./... \
+	@go test -run "^$$" -benchmem -benchtime 1000x -bench "^(Benchmark).*" ./... \
 	> ${IGNORED_FOLDER}/${BENCHREPORT_FILE} || { cat ${IGNORED_FOLDER}/${BENCHREPORT_FILE} \
 	| sed ''/PASS/s//`printf "\033[32mPASS\033[0m"`/'' \
 	| sed ''/FAIL/s//`printf "\033[35mFAIL\033[0m"`/'' \

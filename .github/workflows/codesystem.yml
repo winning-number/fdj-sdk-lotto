@@ -1,0 +1,22 @@
+name: codesystem
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  checker:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Check codesystem
+      uses: gofast-pkg/codesystem@main
+      with:
+        type: 'lib'
+        context: '.'
